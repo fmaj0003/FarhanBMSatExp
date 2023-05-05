@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Experiment</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-external-html.js"></script>
+    <script src="jspsych/plugin-preload.js"></script>
+    <script src="jspsych/plugin-instructions.js"></script>
+    <script src="jspsych/plugin-image-slider-response.js"></script>
+    <script src="jspsych/plugin-image-keyboard-response-adjust.js"></script>
+    <script src="jspsych/plugin-image-slider-response-adjust.js"></script>
+    <link href="jspsych/jspsych_ak.css" rel="stylesheet" type="text/css" />
+    <script src="jatos.js"></script>
+
+</head>
+
+<body></body>
+<script>
+    jatos.onLoad(function() {
+        jatos.addAbortButton();
+        var PROLIFIC_PID = jatos.urlQueryParameters.PROLIFIC_PID;
+        var study_id = jatos.urlQueryParameters.STUDY_ID;
+        var session_id = jatos.urlQueryParameters.SESSION_ID;
+
+        var jsPsych = initJsPsych({
+            on_finish: function() {
+                jsPsych.data.displayData();
+                //jatos.endStudyAndRedirect("https://monash.az1.qualtrics.com/jfe/form/SV_b1rJWCr0om5GPJQ?PROLIFIC_PID=" + jsPsych.data.dataProperties.PROLIFIC_PID, jsPsych.data.get().csv());
+            }
+        });
+
+
+        jsPsych.data.addProperties({
+            PROLIFIC_PID: PROLIFIC_PID,
+            study_id: study_id,
+            session_id: session_id
+        });
+
+        if (typeof jsPsych.data.dataProperties.PROLIFIC_PID === 'undefined') {
+            jsPsych.data.dataProperties.PROLIFIC_PID = jsPsych.randomization.randomID(12);
+        };
+
+
+        /* instruction and consent forms as external htmls */
+        var instruction1 = {
+            type: jsPsychExternalHtml,
+            url: "experiment_overview.html",
+            cont_btn: "start"
+        };
+
+        var instruction2 = {
+            type: jsPsychExternalHtml,
+            url: "consent_form.html",
+            cont_btn: "start"
+        };
+
+        var instruction3 = {
+            type: jsPsychExternalHtml,
+            url: "practise_instr.html",
+            cont_btn: "start"
+        };
+
+        /*define welcome message trial */
+        var welcome = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: 'Welcome to the experiment. Press any key to begin.'
+        };
+
+        var startExp = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: 'You have now completed the practise trial. Ready to start the experient? <p>Press any key to begin.</p>'
+        };
+
+        /* preload images */
+        var preload = {
+            type: jsPsychPreload,
+            images: ["stimuli/practise_trial.png",
+                "stimuli/flower_4_1.png",
+                "stimuli/flower_29_1.png",
+                "stimuli/flower_33_1.png",
+                "stimuli/flower_35_1.png",
+                "stimuli/flower_39_1.png",
+                "stimuli/flower_43_1.png",
+                "stimuli/flower_47_1.png",
+                "stimuli/flower_49_1.png",
+                "stimuli/flower_51_1.png",
+                "stimuli/flower_52_1.png",
+                "stimuli/inside_23_1.png",
+                "stimuli/inside_143_1.png",
+                "stimuli/inside_157_1.png",
+                "stimuli/inside_171_1.png",
+                "stimuli/inside_182_1.png",
+                "stimuli/inside_190_1.png",
+                "stimuli/inside_193_1.png",
+                "stimuli/inside_198_1.png",
+                "stimuli/inside_214_1.png",
+                "stimuli/inside_223_1.png",
+                "stimuli/outside_2_1.png",
+                "stimuli/outside_15_1.png",
+                "stimuli/outside_17_1.png",
+                "stimuli/outside_151_1.png",
+                "stimuli/outside_173_1.png",
+                "stimuli/outside_176_1.png",
+                "stimuli/outside_195_1.png",
+                "stimuli/outside_212_1.png",
+                "stimuli/outside_216_1.png",
+                "stimuli/outside_218_1.png",
+                "stimuli/people_10_1.png",
+                "stimuli/people_11_1.png",
+                "stimuli/people_12_1.png",
+                "stimuli/people_13_1.png",
+                "stimuli/people_14_1.png",
+                "stimuli/people_15_1.png",
+                "stimuli/people_16_1.png",
+                "stimuli/people_17_1.png",
+                "stimuli/people_18_1.png",
+                "stimuli/people_19_1.png"
+            ]
+        };
+
+        /* define practise trial stimuli array*/
+        var prac_stimuli = [{
+            stimulus: "stimuli/practise_trial.png"
+        }]
+
+        /* define trial stimuli array for timeline variables */
+        var test_stimuli = [{
+            stimulus: "stimuli/flower_4_1.png"
+        }, {
+            stimulus: "stimuli/flower_29_1.png"
+        }, {
+            stimulus: "stimuli/flower_33_1.png"
+        }, {
+            stimulus: "stimuli/flower_35_1.png"
+        }, {
+            stimulus: "stimuli/flower_39_1.png"
+        }, {
+            stimulus: "stimuli/flower_43_1.png"
+        }, {
+            stimulus: "stimuli/flower_47_1.png"
+        }, {
+            stimulus: "stimuli/flower_49_1.png"
+        }, {
+            stimulus: "stimuli/flower_51_1.png"
+        }, {
+            stimulus: "stimuli/flower_52_1.png"
+        }, {
+            stimulus: "stimuli/inside_23_1.png"
+        }, {
+            stimulus: "stimuli/inside_143_1.png"
+        }, {
+            stimulus: "stimuli/inside_157_1.png"
+        }, {
+            stimulus: "stimuli/inside_171_1.png"
+        }, {
+            stimulus: "stimuli/inside_182_1.png"
+        }, {
+            stimulus: "stimuli/inside_190_1.png"
+        }, {
+            stimulus: "stimuli/inside_193_1.png"
+        }, {
+            stimulus: "stimuli/inside_198_1.png"
+        }, {
+            stimulus: "stimuli/inside_214_1.png"
+        }, {
+            stimulus: "stimuli/inside_223_1.png"
+        }, {
+            stimulus: "stimuli/outside_2_1.png"
+        }, {
+            stimulus: "stimuli/outside_15_1.png"
+        }, {
+            stimulus: "stimuli/outside_17_1.png"
+        }, {
+            stimulus: "stimuli/outside_151_1.png"
+        }, {
+            stimulus: "stimuli/outside_173_1.png"
+        }, {
+            stimulus: "stimuli/outside_176_1.png"
+        }, {
+            stimulus: "stimuli/outside_195_1.png"
+        }, {
+            stimulus: "stimuli/outside_212_1.png"
+        }, {
+            stimulus: "stimuli/outside_216_1.png"
+        }, {
+            stimulus: "stimuli/outside_218_1.png"
+        }, {
+            stimulus: "stimuli/people_10_1.png"
+        }, {
+            stimulus: "stimuli/people_11_1.png"
+        }, {
+            stimulus: "stimuli/people_12_1.png"
+        }, {
+            stimulus: "stimuli/people_13_1.png"
+        }, {
+            stimulus: "stimuli/people_14_1.png"
+        }, {
+            stimulus: "stimuli/people_15_1.png"
+        }, {
+            stimulus: "stimuli/people_16_1.png"
+        }, {
+            stimulus: "stimuli/people_17_1.png"
+        }, {
+            stimulus: "stimuli/people_18_1.png"
+        }, {
+            stimulus: "stimuli/people_19_1.png"
+        }];
+
+        var shuffledTest_stimuli = jsPsych.randomization.repeat(test_stimuli, 1);
+
+        /* vars to randomise slider start and slider limits */
+        var random_sliderstart = function() {
+            var s_start = jsPsych.randomization.sampleWithoutReplacement([50, 100, 150], 1)[0];
+            return s_start;
+        };
+
+        /* vars to randomise slider diretcion  */
+        var random_sliderdir = function() {
+            if (jsPsych.randomization.sampleBernoulli(0.5)) {
+                // this happens 50% of the time
+                var s_dir = 'ltr';
+            } else {
+                // this happens 50% of the time
+                var s_dir = 'rtl';
+            }
+            return s_dir;
+        };
+
+        /* vars to set slider limits */
+        var sliderVals = {
+            sliderMin: [10, 20, 30],
+            sliderMax: [170, 180, 190]
+        };
+
+        var full_sliderVals = jsPsych.randomization.factorial(sliderVals, 1);
+        var chooseSliderVals = jsPsych.randomization.randomInt(0, 8);
+        var thisSliderVals = full_sliderVals[chooseSliderVals];
+
+        /* image filter arndomization */
+        var Filterstart = 30;
+        var Filterend = 170;
+        var fullFilterRange = [...Array(Filterend - Filterstart + 1).keys()].map(x => x + Filterstart);
+        var thisFilter = function() {
+            var thisfilt = jsPsych.randomization.sampleWithReplacement(fullFilterRange, 1);
+            return thisfilt;
+        };
+
+
+        /* fixation */
+        var fixation = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '<div style="font-size:60px;">+</div>',
+            choices: "NO_KEYS",
+            trial_duration: 500,
+        };
+
+        // If render_on_canvas is false, the images will be shown via an <img> rather than <canvas> element.
+        // In some browsers, the first time the images are shown, the <img> method (render_on_canvas: false) will produce a brief 
+        // blank screen (white flash) between images that are presented consecutively with no post_trial_gap between them.
+        var imPresent = {
+            type: jsPsychImageKeyboardResponseAdjust,
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            trial_duration: 500,
+            image_filter_level: thisFilter,
+            choices: "NO_KEYS",
+            stimulus_width: 500,
+            maintain_aspect_ratio: true,
+            post_trial_gap: 0,
+        };
+
+
+        /* slider */
+        var imRatePrac = {
+            type: jsPsychImageSliderResponseAdjust,
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            button_label: "Continue",
+            min: 10,
+            max: 190,
+            slider_start: 15,
+            slider_dir: random_sliderdir,
+            step: 1,
+            require_movement: true,
+            prompt: "<p>Adjust the image until it looks like the previous image. You can do this by clicking on different parts of the slider below the image.</p>",
+            slider_width: 500,
+            stimulus_width: 500,
+            maintain_aspect_ratio: true,
+            post_trial_gap: 0,
+        };
+
+        /* slider */
+        var imRate = {
+            type: jsPsychImageSliderResponseAdjust,
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            button_label: "Continue",
+            min: thisSliderVals.sliderMin,
+            max: thisSliderVals.sliderMax,
+            slider_start: random_sliderstart,
+            slider_dir: random_sliderdir,
+            step: 1,
+            require_movement: true,
+            prompt: "<p>Adjust the image until it looks like like the previous image</p>",
+            slider_width: 500,
+            stimulus_width: 500,
+            maintain_aspect_ratio: true,
+            post_trial_gap: 0,
+        };
+
+        /* define practise trial */
+        var prac_procedure = {
+            timeline: [imPresent, fixation, imRatePrac],
+            timeline_variables: prac_stimuli,
+            randomize_order: false
+        };
+
+        /* define test procedure */
+        var test_procedure = {
+            timeline: [imPresent, fixation, imRate],
+            timeline_variables: shuffledTest_stimuli,
+            randomize_order: false
+        };
+
+        jsPsych.run([welcome, instruction1, instruction2, instruction3, preload, prac_procedure, startExp, test_procedure, test_procedure]);
+        //jsPsych.run([welcome, preload, prac_procedure, startExp, test_procedure, test_procedure]);
+    });
+</script>
+
+</html>
