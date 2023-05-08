@@ -26,7 +26,6 @@
 
         var jsPsych = initJsPsych({
             on_finish: function() {
-                jsPsych.data.displayData();
                 jatos.endStudyAndRedirect("https://monash.az1.qualtrics.com/jfe/form/SV_6DSCE0JZoEDa9qS?PROLIFIC_PID=" + jsPsych.data.dataProperties.PROLIFIC_PID, 
                 jsPsych.data.get().csv());
             }
