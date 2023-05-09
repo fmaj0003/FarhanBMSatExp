@@ -20,14 +20,14 @@
 <script>
     jatos.onLoad(function() {
         jatos.addAbortButton();
+
         var PROLIFIC_PID = jatos.urlQueryParameters.PROLIFIC_PID;
         var study_id = jatos.urlQueryParameters.STUDY_ID;
         var session_id = jatos.urlQueryParameters.SESSION_ID;
 
         var jsPsych = initJsPsych({
             on_finish: function() {
-                jatos.endStudyAndRedirect("https://monash.az1.qualtrics.com/jfe/form/SV_6DSCE0JZoEDa9qS?PROLIFIC_PID=" + jsPsych.data.dataProperties.PROLIFIC_PID, 
-                jsPsych.data.get().csv());
+                jatos.endStudyAndRedirect("https://monash.az1.qualtrics.com/jfe/form/SV_6DSCE0JZoEDa9qS?PROLIFIC_PID=" + jsPsych.data.dataProperties.PROLIFIC_PID, jsPsych.data.get().csv());
             }
         });
 
@@ -235,18 +235,31 @@
         };
 
         var full_sliderVals = jsPsych.randomization.factorial(sliderVals, 1);
-        var chooseSliderVals = jsPsych.randomization.randomInt(0, 8);
-        var thisSliderVals = full_sliderVals[chooseSliderVals];
+
+        var thisSliderValsMIN = function() {
+            var chooseSliderVals = jsPsych.randomization.randomInt(0, 8);
+            var s_val = full_sliderVals[chooseSliderVals];
+            return s_val.sliderMin;
+        };
+
+        var thisSliderValsMAX = function() {
+            var chooseSliderVals = jsPsych.randomization.randomInt(0, 8);
+            var s_val = full_sliderVals[chooseSliderVals];
+            return s_val.sliderMax;
+        };
 
         /* image filter randomization */
         var Filterstart = 30;
         var Filterend = 170;
         var fullFilterRange = [...Array(Filterend - Filterstart + 1).keys()].map(x => x + Filterstart);
-        var thisFilter = function() {
-            var thisfilt = jsPsych.randomization.sampleWithReplacement(fullFilterRange, 1);
-            return thisfilt;
-        };
 
+        var thisfilt = jsPsych.randomization.sampleWithReplacement(fullFilterRange, shuffledTest_stimuli.length);
+
+        //loop through the arrays using the first one's length since they're the same length
+        for (var i = 0; i < thisfilt.length; i++) {
+            //set the keys and values
+            shuffledTest_stimuli[i].thisFilter = thisfilt[i];
+        }
 
         /* fixation */
         var fixation = {
@@ -259,11 +272,22 @@
         // If render_on_canvas is false, the images will be shown via an <img> rather than <canvas> element.
         // In some browsers, the first time the images are shown, the <img> method (render_on_canvas: false) will produce a brief 
         // blank screen (white flash) between images that are presented consecutively with no post_trial_gap between them.
+        var imPresentPrac = {
+            type: jsPsychImageKeyboardResponseAdjust,
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            trial_duration: 500,
+            image_filter_level: 175,
+            choices: "NO_KEYS",
+            stimulus_width: 500,
+            maintain_aspect_ratio: true,
+            post_trial_gap: 0,
+        };
+
         var imPresent = {
             type: jsPsychImageKeyboardResponseAdjust,
             stimulus: jsPsych.timelineVariable('stimulus'),
             trial_duration: 500,
-            image_filter_level: thisFilter,
+            image_filter_level: jsPsych.timelineVariable('thisFilter'),
             choices: "NO_KEYS",
             stimulus_width: 500,
             maintain_aspect_ratio: true,
@@ -294,8 +318,8 @@
             type: jsPsychImageSliderResponseAdjust,
             stimulus: jsPsych.timelineVariable('stimulus'),
             button_label: "Continue",
-            min: thisSliderVals.sliderMin,
-            max: thisSliderVals.sliderMax,
+            min: thisSliderValsMIN,
+            max: thisSliderValsMAX,
             slider_start: random_sliderstart,
             slider_dir: random_sliderdir,
             step: 1,
@@ -309,7 +333,7 @@
 
         /* define practise trial */
         var prac_procedure = {
-            timeline: [imPresent, fixation, imRatePrac],
+            timeline: [imPresentPrac, fixation, imRatePrac],
             timeline_variables: prac_stimuli,
             randomize_order: false
         };

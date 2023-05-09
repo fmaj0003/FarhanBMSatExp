@@ -380,6 +380,7 @@ var jsPsychImageSliderResponseAdjust = (function(jspsych) {
                     slider_start: trial.slider_start,
                     response: response.response,
                     slider_direction: trial.slider_dir,
+                    click_num: ClickNum,
                 };
                 display_element.innerHTML = "";
                 // next trial
@@ -387,6 +388,7 @@ var jsPsychImageSliderResponseAdjust = (function(jspsych) {
             };
 
             var chVal;
+            var ClickNum = 0;
 
             display_element
                 .querySelector("#jspsych-image-slider-response-adjust-response")
@@ -394,6 +396,7 @@ var jsPsychImageSliderResponseAdjust = (function(jspsych) {
                     chVal = display_element.querySelector("#jspsych-image-slider-response-adjust-response").valueAsNumber;
                     canvas.style.filter = `saturate(${chVal}%)`;
                     //canvas.style.filter = `contrast(${chVal}%)`;
+                    ClickNum = ClickNum + 1;
                 });
 
 

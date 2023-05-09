@@ -203,9 +203,9 @@ var jsPsychImageKeyboardResponseAdjust = (function(jspsych) {
                 }
                 // gather the data to store for the trial
                 var trial_data = {
-                    rt: response.rt,
-                    stimulus: trial.stimulus,
-                    response: response.key,
+                    rtimpresent: response.rt,
+                    stimuluspresent: trial.stimulus,
+                    responseimpresent: response.key,
                     imagestartvalue: trial.image_filter_level,
                 };
                 // clear the display
