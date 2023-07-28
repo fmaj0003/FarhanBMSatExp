@@ -7,6 +7,7 @@
     <script src="jspsych/plugin-html-keyboard-response.js"></script>
     <script src="jspsych/plugin-external-html.js"></script>
     <script src="jspsych/plugin-preload.js"></script>
+    <script src="jspsych/plugin-fullscreen.js"></script>
     <script src="jspsych/plugin-instructions.js"></script>
     <script src="jspsych/plugin-image-slider-response.js"></script>
     <script src="jspsych/plugin-image-keyboard-response-adjust.js"></script>
@@ -18,15 +19,15 @@
 <body></body>
 <script>
     /*jatos.onLoad(function() {
-                                                                                                                                                                                                                                                        jatos.addAbortButton();
-                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                jatos.addAbortButton();
+                                                                                                                                                                                                                                                                                                                
 
-                                                                                                                                                                                                                                                        var jsPsych = initJsPsych({
-                                                                                                                                                                                                                                                            on_finish: function() {
-                                                                                                                                                                                                                                                                jatos.endStudyAndRedirect("https://monash.az1.qualtrics.com/jfe/form/SV_6DSCE0JZoEDa9qS?PROLIFIC_PID=" + jsPsych.data.dataProperties.PROLIFIC_PID, jsPsych.data.get().csv());
-                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                        });
-                                                                                                                                                                                                                                            */
+                                                                                                                                                                                                                                                                                                                var jsPsych = initJsPsych({
+                                                                                                                                                                                                                                                                                                                    on_finish: function() {
+                                                                                                                                                                                                                                                                                                                        jatos.endStudyAndRedirect("https://monash.az1.qualtrics.com/jfe/form/SV_6DSCE0JZoEDa9qS?PROLIFIC_PID=" + jsPsych.data.dataProperties.PROLIFIC_PID, jsPsych.data.get().csv());
+                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                });
+                                                                                                                                                                                                                                                                                                    */
     var PROLIFIC_PID = [];
     var study_id = [];
     var session_id = [];
@@ -351,8 +352,20 @@
         randomize_order: false
     };
 
+    var enter_fullscreen = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: true
+    }
+
+    var exit_fullscreen = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: false,
+        delay_after: 0
+    }
+
+
     //jsPsych.run([welcome, instruction1, instruction2, instruction3, preload, prac_procedure, startExp, test_procedure, test_procedure]);
-    jsPsych.run([welcome, preload, prac_procedure, startExp, test_procedure, test_procedure]);
+    jsPsych.run([welcome, preload, prac_procedure, startExp, enter_fullscreen, test_procedure, exit_fullscreen, test_procedure]);
     //});
 </script>
 
