@@ -162,12 +162,11 @@ var jsPsychImageSliderResponseAdjust = (function(jspsych) {
                         getHeightWidth(); // only possible to get width/height after image loads
                         ctx.drawImage(img, 0, 0, width, height);
                     }
+
                     // add image filter modification based on slider starting position here:
                     var slsVal;
                     slsVal = trial.slider_start;
                     canvas.style.filter = `saturate(${slsVal}%)`;
-
-                    //canvas.style.filter = `blur(${slsVal}px)`;
                     //canvas.style.filter = `contrast(${slsVal}%)`;
                 };
                 img.src = trial.stimulus;
@@ -398,6 +397,18 @@ var jsPsychImageSliderResponseAdjust = (function(jspsych) {
                     //canvas.style.filter = `contrast(${chVal}%)`;
                     ClickNum = ClickNum + 1;
                 });
+
+
+            display_element
+            .querySelector("#jspsych-image-slider-response-adjust-response")
+            .addEventListener("mousemove", () => {
+                chVal = display_element.querySelector("#jspsych-image-slider-response-adjust-response").valueAsNumber;
+                canvas.style.filter = `saturate(${chVal}%)`;
+                //canvas.style.filter = `contrast(${chVal}%)`;
+            });
+
+                
+
 
 
             display_element
