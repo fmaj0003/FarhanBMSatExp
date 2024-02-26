@@ -1,0 +1,140 @@
+---
+title: "V5"
+author: "Farhan Majumder"
+date: "`r Sys.Date()`"
+output:  
+  tufte::tufte_html: 
+    toc: true
+    number_sections: true ## or html_document or powerpoint_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tufte)
+library(haven)
+library(data.table)
+library(psych)
+library(ggplot2)
+library(ggpubr)
+library(ggthemes)
+library(scales)
+library(ggExtra)
+library(JWileymisc)
+library(dplyr)
+library(tidyr)
+```
+
+##Importing Data
+```{r loaddata}
+
+#establish folder contain all data (data.txt can be in subfolder)
+folder_path <- 
+"/Users/kuszti/Downloads/Farhan_s project/data 5"
+  ##"/Users/farhan/My Drive (fmaj0003@student.monash.edu)/Data Collection/Pilot/N = 5/data5"
+
+"/Users/kuszti/Downloads/Farhan_s project/n = 20 complete"
+
+"/Users/kuszti/Downloads/Farhan_s project/data 5"
+
+# Get the list of text file names in the folder and subfolders
+file_names <- list.files(folder_path, pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
+
+# Initialize an empty dataframe
+combined_df <- data.frame()
+
+# Loop through each file
+for (file_name in file_names) {
+  #import the headers from one file
+  header <- read.table(file_name, sep = ",", nrows = 5, header = TRUE)
+  # Read the file into a temporary dataframe, skipping intro/practice screens
+  temp_df <- read.table(file_name, sep = ",", skip = 13, header = FALSE)
+
+  # Append the temporary dataframe to the combined dataframe
+  combined_df <- rbind(combined_df, temp_df)
+}
+
+#set header
+  colnames(combined_df) <- colnames(header)
+
+db <- combined_df
+
+summary(unique(db$PROLIFIC_PID))
+
+```
+
+##Cleaning up
+```{r}
+## change "response" and "imagestartvalue" to numeric class
+db$imagestartvalue <- as.numeric(db$imagestartvalue)
+db$response <- as.numeric(db$response)
+
+## subset db with only useful value metrics
+db_sub <- db[, c("trial_index", "PROLIFIC_PID","rt","stimuluspresent",
+                 "imagestartvalue","response",
+                 "slider_start","slider_minimum", "slider_maximum",
+                 "slider_direction", "click_num")]
+
+## clean up db_sub
+
+dbs_clean <- db_sub [] %>%
+  filter(rt != "null") %>%  #remove all null blocks (NOT MISSING DATA)
+  #shift response, rt, and slider value column to line up with imagestartvalue
+  mutate(response = lead(response, n = 1)) %>%
+  mutate(rt = lead(rt, n = 1)) %>%
+  mutate(slider_start = lead(slider_start, n = 1)) %>%
+  mutate(slider_minimum = lead(slider_minimum, n = 1)) %>%
+  mutate(slider_maximum = lead(slider_maximum, n = 1)) %>%
+  mutate(slider_direction = lead(slider_direction, n = 1)) %>%
+  mutate(click_num = lead(click_num, n = 1))
+
+##  further remove blank blocks
+dbs_clean2 <- dbs_clean[!is.na(dbs_clean$rt) & dbs_clean$rt != "", ]
+
+
+```
+
+# First v Second Pass Correlation
+
+## Delineating First and Second Pass per participants
+``` {r}
+dt <- data.table(dbs_clean2)
+dt[, pass := ifelse(trial_index <= 129, 1, 2)]
+setnames(dt, c("stimuluspresent", "imagestartvalue", "PROLIFIC_PID", "slider_minimum",
+               "slider_maximum", "click_num"), 
+         c("stimulus", "presented", "PID", "slidermin", "slidermax", "clicks"))
+
+```
+
+##Subsetting
+``` {r}
+dtr <- dt[, .(PID, pass, stimulus, presented, response)]
+dtr_wide <- dtr %>%
+  pivot_wider(names_from = pass,
+              values_from = c(presented, response))
+
+setDT(dtr_wide)
+```
+
+##Plotting First v Second Pass per participants
+``` {r}
+ggplot(dtr_wide, aes(x = response_1, y = response_2)) +
+  geom_point() +
+  labs(title = "Response First Pass vs Second Pass", 
+       x = "First Pass", y = "Second Pass") +
+  facet_wrap(~ PID)
+```
+
+## Perform correlation test
+``` {r}
+
+
+correlations <- dtr_wide[, .(correlation = cor.test(response_1, response_2)$estimate), 
+                         by = .(Participant = PID)]
+
+print(correlations)
+
+##Creating histogram from results
+
+hist(correlations$correlation, breaks = 10, col = "lightblue", main = "Correlation Histogram", xlab = "Correlation")
+
+```
